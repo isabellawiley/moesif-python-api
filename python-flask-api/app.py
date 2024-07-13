@@ -27,3 +27,21 @@ def employee_is_valid(employee):
         if key != 'name':
             return False
     return True
+
+@app.route('/employees', methods=['POST'])
+def create_employee():
+    global nextEmployeeId
+    employee = json.loads(request.data)
+    print(employee)
+    if not employee_is_valid(employee):
+        return jsonify({'error': 'Invalid employee properties.'}), 400
+    
+    employee['id'] = nextEmployeeId
+    nextEmployeeId += 1
+    employees.append(employee)
+
+    return '', 201, {'location': f'/employees/{employee["id"]}'}
+
+
+if __name__ == '__main__':
+    app.run(port=5000)
